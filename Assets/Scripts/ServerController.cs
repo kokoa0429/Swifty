@@ -1,25 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ServerController : Photon.MonoBehaviour
 {
 
     public GameObject status;
+    public GameObject player;
     private Text statusText;
-    
+    private Text playerName;
+
     private bool ConnectInUpdate = true;
 
     public void Awake()
     {
         DontDestroyOnLoad(this);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     public virtual void Start()
     {
         statusText = status.GetComponent<Text>();
-        PhotonNetwork.autoJoinLobby = false;
+        playerName = status.GetComponent<Text>();
+        PhotonNetwork.autoJoinLobby = true;
     }
 
     public virtual void Update()
@@ -39,25 +44,22 @@ public class ServerController : Photon.MonoBehaviour
 
     public virtual void OnJoinedLobby()
     {
-        Debug.Log("Jointed Lobby, going to Hub");
+        Debug.Log("Jointed Lobby");
+        statusText.text = "server connected logged in Lobby";
 
         RoomInfo[] rooms = PhotonNetwork.GetRoomList();
         for(int i = 0; i< rooms.Length; i++) {
             Debug.Log(rooms[i]);
         }
-
-        JoinHub();
-
 }
+
     public void JoinHub()
     {
         PhotonNetwork.autoCleanUpPlayerObjects = false;
         RoomOptions roomOptions = new RoomOptions();
-
         PhotonNetwork.JoinOrCreateRoom("hub", roomOptions, null);
     }
     
-
     void OnReceivedRoomListUpdate()
     {
         RoomInfo[] rooms = PhotonNetwork.GetRoomList();
@@ -80,26 +82,34 @@ public class ServerController : Photon.MonoBehaviour
         PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
-    // the following methods are implemented to give you some context. re-implement them as needed.
-
     public virtual void OnFailedToConnectToPhoton(DisconnectCause cause)
     {
-        Debug.LogError("Cause: " + cause);
+        statusText.text = "server connection failed";
     }
 
     public void OnJoinedRoom()
     {
-        Debug.Log("OnJoinedRoom() called by PUN. Now this client is in a room. From here on, your game would be running. For reference, all callbacks are listed in enum: PhotonNetworkingMessage");
+        if(PhotonNetwork.room.Name == "hub")
+        {
+            PhotonNetwork.isMessageQueueRunning = false;
+            SceneManager.LoadScene("Lobby");
+        }
+    }
+    private void OnSceneLoaded(Scene i_loadedScene, LoadSceneMode i_mode)
+    {
+        PhotonNetwork.isMessageQueueRunning = true;
 
-        CreatePlayerObject();
+        if (i_loadedScene.name == "Lobby")
+        {
+            CreatePlayerObject();
+        }
     }
 
     void CreatePlayerObject()
     {
         Vector3 position = new Vector3(33.5f, 1.5f, 20.5f);
-
         PhotonNetwork.Instantiate("a Player", position, Quaternion.identity, 0);
-
-        //Camera.Target = newPlayerObject.transform;
     }
+
+
 }

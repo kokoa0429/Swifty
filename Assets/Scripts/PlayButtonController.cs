@@ -5,29 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayButtonController : MonoBehaviour {
-
-    public GameObject canvas;
-    public GameObject userName;
-
-    private Text text;
-
-    private void Start()
-    {
-        canvas.SetActive(false);
-        text = userName.GetComponent<Text>();
-    }
-
+    
+    public ServerController sc;
+    
     public void OnClick()
     {
-        canvas.SetActive(true);
-
-        //SceneManager.LoadScene("Lobby");
-    }
-
-    public void OnApplyButtonClick()
-    {
-
-        Debug.Log(text.text);
-        SceneManager.LoadScene("Lobby");
+        sc.JoinHub();
     }
 }

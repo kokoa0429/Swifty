@@ -7,8 +7,10 @@ public class JoinMatch : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        /*
         PhotonNetwork.LeaveRoom();
-        //PhotonNetwork.JoinOrCreateRoom("match",null,null);
         SceneManager.LoadScene("GameStage");
+        */
+        //TODO enter join match
     }
 }

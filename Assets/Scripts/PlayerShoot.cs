@@ -47,15 +47,10 @@ public class PlayerShoot : MonoBehaviour {
                 {
                     //target.GetComponent<Rigidbody>().AddExplosionForce(1000f, _hit.point, 100f);
                    // AddExplosion();
-                    pv.RPC("AddExplosion", PhotonTargets.AllViaServer);
+                    //pv.RPC("AddExplosion", PhotonTargets.AllViaServer);
                 }
 
             }
         }
-    }
-    [PunRPC]
-    private void AddExplosion()
-    {
-        Debug.Log("b");
     }
 }
